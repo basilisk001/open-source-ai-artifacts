@@ -22,6 +22,15 @@ export function WebContainerRunner({
     setMessage('Booting WebContainer...')
 
     try {
+      if (!(window as any).crossOriginIsolated ||
+          !(window as any).SharedArrayBuffer) {
+        setStatus('error')
+        setMessage(
+          'WebContainers require cross-origin isolation (COOP/COEP) and a supported browser (Chrome/Edge). Try Chrome over HTTPS; some hosts block these headers in previews.'
+        )
+        return
+      }
+
       const { WebContainer } = await import('@webcontainer/api')
       const wc = await WebContainer.boot()
 
