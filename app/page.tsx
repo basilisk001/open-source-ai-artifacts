@@ -68,6 +68,39 @@ export default function Home() {
       }
 
       setErrorMessage(error.message)
+
+      // Demo fallback when no API key / access denied
+      if (
+        /access denied|api key|unauthorized|401|403/i.test(error.message || '')
+      ) {
+        const demo = {
+          commentary:
+            'Demo mode: No API key detected. Showing a simple Python example running in-browser.',
+          template: 'code-interpreter-v1',
+          title: 'Demo Python',
+          description: 'Runs a short Python snippet via Pyodide.',
+          additional_dependencies: [],
+          has_additional_dependencies: false,
+          install_dependencies_command: 'pip install --no-deps',
+          port: null,
+          file_path: 'script.py',
+          code: 'print("Hello from the in-browser Python demo!")',
+        } as unknown as FragmentSchema
+
+        setFragment(demo)
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'assistant',
+            content: [
+              { type: 'text', text: demo.commentary },
+              { type: 'code', text: demo.code as string },
+            ],
+            object: demo,
+          },
+        ])
+        setCurrentTab('fragment')
+      }
     },
     onFinish: async ({ object: fragment, error }) => {
       if (!error) {
