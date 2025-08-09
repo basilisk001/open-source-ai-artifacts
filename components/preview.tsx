@@ -1,7 +1,5 @@
-import { DeployDialog } from './deploy-dialog'
 import { FragmentCode } from './fragment-code'
 import { FragmentPreview } from './fragment-preview'
-import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Tooltip,
@@ -40,8 +38,6 @@ export function Preview({
     return null
   }
 
-  const isLinkAvailable = result?.template !== 'code-interpreter-v1'
-
   return (
     <div className="absolute md:relative z-10 top-0 left-0 shadow-2xl md:rounded-tl-3xl md:rounded-bl-3xl md:border-l md:border-y bg-popover h-full w-full overflow-auto">
       <Tabs
@@ -55,14 +51,12 @@ export function Preview({
           <TooltipProvider>
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
+                <button
                   className="text-muted-foreground"
                   onClick={onClose}
                 >
                   <ChevronsRight className="h-5 w-5" />
-                </Button>
+                </button>
               </TooltipTrigger>
               <TooltipContent>Close sidebar</TooltipContent>
             </Tooltip>
@@ -96,18 +90,6 @@ export function Preview({
               </TabsTrigger>
             </TabsList>
           </div>
-          {result && (
-            <div className="flex items-center justify-end gap-2">
-              {isLinkAvailable && (
-                <DeployDialog
-                  url={result.url!}
-                  sbxId={result.sbxId!}
-                  teamID={teamID}
-                  accessToken={accessToken}
-                />
-              )}
-            </div>
-          )}
         </div>
         {fragment && (
           <div className="overflow-y-auto w-full h-full">
@@ -124,7 +106,12 @@ export function Preview({
               )}
             </TabsContent>
             <TabsContent value="fragment" className="h-full">
-              {result && <FragmentPreview result={result as ExecutionResult} />}
+              {fragment && (
+                <FragmentPreview
+                  fragment={fragment as any}
+                  result={result as ExecutionResult}
+                />
+              )}
             </TabsContent>
           </div>
         )}

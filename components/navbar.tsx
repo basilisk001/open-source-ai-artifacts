@@ -21,7 +21,6 @@ import {
   GitHubLogoIcon,
   TwitterLogoIcon,
 } from '@radix-ui/react-icons'
-import { Session } from '@supabase/supabase-js'
 import { ArrowRight, LogOut, Trash, Undo } from 'lucide-react'
 import Link from 'next/link'
 
@@ -35,7 +34,7 @@ export function NavBar({
   onUndo,
   canUndo,
 }: {
-  session: Session | null
+  session: any | null
   showLogin: () => void
   signOut: () => void
   onClear: () => void
@@ -107,10 +106,10 @@ export function NavBar({
                     <Avatar className="w-8 h-8">
                       <AvatarImage
                         src={
-                          session.user.user_metadata?.avatar_url ||
-                          'https://avatar.vercel.sh/' + session.user.email
+                          session.user?.user_metadata?.avatar_url ||
+                          'https://avatar.vercel.sh/' + session.user?.email
                         }
-                        alt={session.user.email}
+                        alt={session.user?.email}
                       />
                     </Avatar>
                   </DropdownMenuTrigger>
@@ -122,7 +121,7 @@ export function NavBar({
               <DropdownMenuLabel className="flex flex-col">
                 <span className="text-sm">My Account</span>
                 <span className="text-xs text-muted-foreground">
-                  {session.user.email}
+                  {session.user?.email}
                 </span>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />

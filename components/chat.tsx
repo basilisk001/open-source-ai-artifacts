@@ -4,6 +4,7 @@ import { ExecutionResult } from '@/lib/types'
 import { DeepPartial } from 'ai'
 import { LoaderIcon, Terminal } from 'lucide-react'
 import { useEffect } from 'react'
+import Image from 'next/image'
 
 export function Chat({
   messages,
@@ -40,10 +41,13 @@ export function Chat({
             }
             if (content.type === 'image') {
               return (
-                <img
+                <Image
                   key={id}
                   src={content.image}
                   alt="fragment"
+                  width={48}
+                  height={48}
+                  unoptimized
                   className="mr-2 inline-block w-12 h-12 object-cover rounded-lg bg-white mb-2"
                 />
               )
