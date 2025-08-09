@@ -96,10 +96,12 @@ export function Preview({
             <TabsContent value="code" className="h-full">
               {Array.isArray(fragment?.code) ? (
                 <FragmentCode
-                  files={fragment.code.map((f) => ({
-                    name: f.file_path,
-                    content: f.file_content,
-                  }))}
+                  files={fragment.code
+                    .filter((f): f is NonNullable<typeof f> => Boolean(f))
+                    .map((f) => ({
+                      name: f.file_path || 'file.txt',
+                      content: f.file_content || '',
+                    }))}
                 />
               ) : fragment?.code && fragment?.file_path ? (
                 <FragmentCode

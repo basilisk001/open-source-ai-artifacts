@@ -91,6 +91,7 @@ export default function Home() {
           type: 'code',
           text: Array.isArray(object.code)
             ? object.code
+                .filter((f): f is NonNullable<typeof f> => Boolean(f))
                 .map((f) => `// ${f.file_path}\n${f.file_content}`)
                 .join('\n\n')
             : (object.code || ''),

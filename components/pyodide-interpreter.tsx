@@ -65,7 +65,15 @@ export function PyodideInterpreter({
     const url = URL.createObjectURL(blob)
     const iframe = iframeRef.current
     if (!iframe) return
-    iframe.src = url + '#' + btoa(fragment.code || '')
+
+    const codeStr = Array.isArray(fragment.code)
+      ? fragment.code
+          .filter((f): f is NonNullable<typeof f> => Boolean(f))
+          .map((f) => `# ${f.file_path}\n${f.file_content}`)
+          .join('\n\n')
+      : (fragment.code || '')
+
+    iframe.src = url + '#' + btoa(codeStr)
     setReady(true)
     return () => URL.revokeObjectURL(url)
   }, [fragment.code])
