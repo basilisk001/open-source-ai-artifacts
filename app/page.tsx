@@ -87,7 +87,14 @@ export default function Home() {
       setFragment(object)
       const content: Message['content'] = [
         { type: 'text', text: object.commentary || '' },
-        { type: 'code', text: object.code || '' },
+        {
+          type: 'code',
+          text: Array.isArray(object.code)
+            ? object.code
+                .map((f) => `// ${f.file_path}\n${f.file_content}`)
+                .join('\n\n')
+            : (object.code || ''),
+        },
       ]
 
       if (!lastMessage || lastMessage.role !== 'assistant') {

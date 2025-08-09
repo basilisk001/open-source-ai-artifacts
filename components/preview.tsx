@@ -94,16 +94,23 @@ export function Preview({
         {fragment && (
           <div className="overflow-y-auto w-full h-full">
             <TabsContent value="code" className="h-full">
-              {fragment.code && fragment.file_path && (
+              {Array.isArray(fragment?.code) ? (
+                <FragmentCode
+                  files={fragment.code.map((f) => ({
+                    name: f.file_path,
+                    content: f.file_content,
+                  }))}
+                />
+              ) : fragment?.code && fragment?.file_path ? (
                 <FragmentCode
                   files={[
                     {
                       name: fragment.file_path,
-                      content: fragment.code,
+                      content: fragment.code as string,
                     },
                   ]}
                 />
-              )}
+              ) : null}
             </TabsContent>
             <TabsContent value="fragment" className="h-full">
               {fragment && (

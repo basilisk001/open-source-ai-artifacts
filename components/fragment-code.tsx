@@ -7,7 +7,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { Download, FileText } from 'lucide-react'
+import { Download, FileText, Package } from 'lucide-react'
 import { useState } from 'react'
 
 export function FragmentCode({
@@ -27,6 +27,39 @@ export function FragmentCode({
     a.style.display = 'none'
     a.href = url
     a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    window.URL.revokeObjectURL(url)
+    document.body.removeChild(a)
+  }
+
+  async function ensureJSZip(): Promise<any> {
+    // If JSZip is already loaded on window, reuse it
+    if ((window as any).JSZip) return (window as any).JSZip
+    // Inject script tag
+    await new Promise<void>((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js'
+      script.async = true
+      script.onload = () => resolve()
+      script.onerror = () => reject(new Error('Failed to load JSZip'))
+      document.body.appendChild(script)
+    })
+    return (window as any).JSZip
+  }
+
+  async function downloadZip() {
+    const JSZip = await ensureJSZip()
+    const zip = new JSZip()
+    for (const f of files) {
+      zip.file(f.name, f.content)
+    }
+    const blob = await zip.generateAsync({ type: 'blob' })
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.style.display = 'none'
+    a.href = url
+    a.download = 'fragment-project.zip'
     document.body.appendChild(a)
     a.click()
     window.URL.revokeObjectURL(url)
@@ -69,9 +102,7 @@ export function FragmentCode({
                   variant="ghost"
                   size="icon"
                   className="text-muted-foreground"
-                  onClick={() =>
-                    download(currentFile, currentFileContent || '')
-                  }
+                  onClick={() => download(currentFile, currentFileContent || '')}
                 >
                   <Download className="h-4 w-4" />
                 </Button>
@@ -79,6 +110,23 @@ export function FragmentCode({
               <TooltipContent side="bottom">Download</TooltipContent>
             </Tooltip>
           </TooltipProvider>
+          {files.length > 1 && (
+            <TooltipProvider>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-muted-foreground"
+                    onClick={downloadZip}
+                  >
+                    <Package className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">Export .zip</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </div>
       </div>
       <div className="flex flex-col flex-1 overflow-x-auto">
