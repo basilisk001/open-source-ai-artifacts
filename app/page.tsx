@@ -74,7 +74,9 @@ export default function Home() {
         setIsPreviewLoading(true)
         // In core-only mode, we skip sandbox execution and just show the fragment
         setFragment(fragment)
-        setCurrentTab('code')
+        setCurrentTab(
+          fragment?.template === 'code-interpreter-v1' ? 'fragment' : 'code',
+        )
         setIsPreviewLoading(false)
       }
     },

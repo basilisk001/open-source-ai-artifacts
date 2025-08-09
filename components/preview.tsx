@@ -106,7 +106,12 @@ export function Preview({
               )}
             </TabsContent>
             <TabsContent value="fragment" className="h-full">
-              {result && <FragmentPreview result={result as ExecutionResult} />}
+              {fragment && (
+                <FragmentPreview
+                  fragment={fragment as any}
+                  result={result as ExecutionResult}
+                />
+              )}
             </TabsContent>
           </div>
         )}
