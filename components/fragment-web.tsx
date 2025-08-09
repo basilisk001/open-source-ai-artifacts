@@ -18,6 +18,8 @@ export function FragmentWeb({ result }: { result: ExecutionResultWeb }) {
     setIframeKey((prevKey) => prevKey + 1)
   }
 
+  const url = result.url || 'about:blank'
+
   return (
     <div className="flex flex-col w-full h-full">
       <iframe
@@ -25,7 +27,7 @@ export function FragmentWeb({ result }: { result: ExecutionResultWeb }) {
         className="h-full w-full"
         sandbox="allow-forms allow-scripts allow-same-origin"
         loading="lazy"
-        src={result.url}
+        src={url}
       />
       <div className="p-2 border-t">
         <div className="flex items-center bg-muted dark:bg-white/10 rounded-2xl">
@@ -44,20 +46,22 @@ export function FragmentWeb({ result }: { result: ExecutionResultWeb }) {
             </Tooltip>
           </TooltipProvider>
           <span className="text-muted-foreground text-xs flex-1 text-ellipsis overflow-hidden whitespace-nowrap">
-            {result.url}
+            {url}
           </span>
-          <TooltipProvider>
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <CopyButton
-                  variant="link"
-                  content={result.url}
-                  className="text-muted-foreground"
-                />
-              </TooltipTrigger>
-              <TooltipContent>Copy URL</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          {result.url && (
+            <TooltipProvider>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <CopyButton
+                    variant="link"
+                    content={result.url}
+                    className="text-muted-foreground"
+                  />
+                </TooltipTrigger>
+                <TooltipContent>Copy URL</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </div>
       </div>
     </div>

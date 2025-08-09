@@ -12,6 +12,7 @@ import { isFileInArray } from '@/lib/utils'
 import { ArrowUp, Paperclip, Square, X } from 'lucide-react'
 import { SetStateAction, useEffect, useMemo, useState } from 'react'
 import TextareaAutosize from 'react-textarea-autosize'
+import Image from 'next/image'
 
 export function ChatInput({
   retry,
@@ -116,9 +117,12 @@ export function ChatInput({
           >
             <X className="h-3 w-3 cursor-pointer" />
           </span>
-          <img
+          <Image
             src={URL.createObjectURL(file)}
             alt={file.name}
+            width={40}
+            height={40}
+            unoptimized
             className="rounded-xl w-10 h-10 object-cover"
           />
         </div>
