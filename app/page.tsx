@@ -16,6 +16,7 @@ import { DeepPartial } from 'ai'
 import { experimental_useObject as useObject } from 'ai/react'
 import { SetStateAction, useEffect, useState } from 'react'
 import { useLocalStorage } from 'usehooks-ts'
+import { generateOfflineFragment } from '@/lib/offline'
 
 export default function Home() {
   const [chatInput, setChatInput] = useLocalStorage('chat', '')
@@ -103,14 +104,38 @@ export default function Home() {
       }
     },
     onFinish: async ({ object: fragment, error }) => {
-      if (!error) {
+      if (!error && fragment) {
         setIsPreviewLoading(true)
-        // In core-only mode, we skip sandbox execution and just show the fragment
         setFragment(fragment)
         setCurrentTab(
           fragment?.template === 'code-interpreter-v1' ? 'fragment' : 'code',
         )
         setIsPreviewLoading(false)
+      } else {
+        // Offline fallback to satisfy any prompt instantly
+        const demo = generateOfflineFragment(chatInput)
+        setFragment(demo)
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'assistant',
+            content: [
+              { type: 'text', text: demo.commentary },
+              {
+                type: 'code',
+                text: Array.isArray(demo.code)
+                  ? demo.code
+                      .map((f) => `// ${f.file_path}\n${f.file_content}`)
+                      .join('\n\n')
+                  : (demo.code as string),
+              },
+            ],
+            object: demo,
+          },
+        ])
+        setCurrentTab(
+          demo.template === 'code-interpreter-v1' ? 'fragment' : 'code',
+        )
       }
     },
   })
